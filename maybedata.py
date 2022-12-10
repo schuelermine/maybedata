@@ -1,12 +1,12 @@
 """A Python implementation of a Maybe type that represents potentially missing values"""
 
 from __future__ import annotations
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
+from callableabc import CallableABC
 from collections.abc import Callable, Iterator
-from inspect import signature
-from typing import Any, Generic, NoReturn, Optional, TypeVar, cast, overload
+from typing import Generic, NoReturn, Optional, TypeVar, cast, overload
 
-__version__ = "0.1"
+__version__ = "0.2"
 
 __all__ = ("Maybe", "Just", "Nothing", "MissingValueError")
 
@@ -14,55 +14,6 @@ T = TypeVar("T", covariant=True)
 G = TypeVar("G")
 U = TypeVar("U")
 V = TypeVar("V")
-
-
-class CallableABCMetaDict(
-    dict[str, object],
-):
-    _class_call: object | None
-
-    __slots__ = ("_class_call",)
-
-    def __init__(self, *args: object, **kwargs: object) -> None:
-        self._class_call = None
-        super().__init__(self, *args, **kwargs)
-
-    def __setitem__(self, key: str, value: object, /) -> None:
-        if key == "_class_call":
-            self._class_call = value
-        super().__setitem__(key, value)
-
-
-class CallableABCMeta(ABCMeta):
-    _class_call: object | None
-
-    @classmethod
-    def __prepare__(
-        cls, __name: str, __bases: tuple[type, ...], **kwds: object
-    ) -> CallableABCMetaDict:
-        return CallableABCMetaDict()
-
-    def __init__(
-        self, name: str, bases: tuple[type, ...], namespace: CallableABCMetaDict
-    ) -> None:
-        self._class_call = namespace._class_call
-        super().__init__(name, bases, namespace)
-
-    def __call__(self, *args: object, **kwds: object) -> object:
-        _class_call = self._class_call
-        if _class_call is not None and callable(_class_call):
-            try:
-                # Try to catch incorrect args early to hide __class_call__
-                sig = signature(_class_call)
-                sig.bind(*args, **kwds)
-            except ValueError:  # Signature does not exist
-                pass
-            return _class_call(*args, **kwds)
-        return super().__call__(*args, **kwds)
-
-
-class CallableABC(metaclass=CallableABCMeta):
-    __slots__ = ()
 
 
 class Maybe(CallableABC, Generic[T]):
