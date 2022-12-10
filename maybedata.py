@@ -6,7 +6,7 @@ from callableabc import CallableABC
 from collections.abc import Callable, Iterator
 from typing import Generic, NoReturn, Optional, TypeVar, cast, overload
 
-__version__ = "0.2"
+__version__ = "0.3"
 
 __all__ = ("Maybe", "Just", "Nothing", "MissingValueError")
 
