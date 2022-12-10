@@ -6,7 +6,7 @@ from callableabc import CallableABC
 from collections.abc import Callable, Iterator
 from typing import Generic, NoReturn, Optional, TypeVar, cast, overload
 
-__version__ = "0.4"
+__version__ = "0.5"
 
 __all__ = ("Maybe", "Just", "Nothing", "MissingValueError")
 
@@ -145,7 +145,9 @@ class Maybe(CallableABC, Generic[T]):
         return maybe1.map(lambda x: lambda y: f(x, y)).ap(maybe2)
 
     @classmethod
-    def lift(cls: type[Maybe[G]], f: Callable[..., G], *args: Maybe[object]) -> Maybe[G]:
+    def lift(
+        cls: type[Maybe[G]], f: Callable[..., G], *args: Maybe[object]
+    ) -> Maybe[G]:
         """
         Apply a function that takes multiple arguments over multiple Maybe values, returning a missing value if any inputs were missing.
         This is a general version of Maybe.lift2.
