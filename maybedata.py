@@ -1,8 +1,12 @@
+"""A Python implementation of a Maybe type that represents potentially missing values"""
+
 from __future__ import annotations
 from abc import abstractmethod
 from callableabc import CallableABC
 from collections.abc import Callable, Iterator
 from typing import Generic, NoReturn, Optional, TypeVar, cast, overload
+
+__version__ = "0.8"
 
 __all__ = ("Maybe", "Just", "Nothing", "MissingValueError")
 
