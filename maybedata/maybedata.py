@@ -1,12 +1,8 @@
-"""A Python implementation of a Maybe type that represents potentially missing values"""
-
 from __future__ import annotations
 from abc import abstractmethod
 from callableabc import CallableABC
 from collections.abc import Callable, Iterator
 from typing import Generic, NoReturn, Optional, TypeVar, cast, overload
-
-__version__ = "0.4"
 
 __all__ = ("Maybe", "Just", "Nothing", "MissingValueError")
 
@@ -46,7 +42,7 @@ class Maybe(CallableABC, Generic[T]):
         ...
 
     @classmethod
-    def _class_call(cls, *args: G) -> Maybe[G]:
+    def _class_call(cls, *args: G) -> Just[G] | Nothing:
         argc = len(args)
         if argc > 1:
             raise TypeError(
@@ -145,7 +141,9 @@ class Maybe(CallableABC, Generic[T]):
         return maybe1.map(lambda x: lambda y: f(x, y)).ap(maybe2)
 
     @classmethod
-    def lift(cls: type[Maybe[G]], f: Callable[..., G], *args: Maybe[object]) -> Maybe[G]:
+    def lift(
+        cls: type[Maybe[G]], f: Callable[..., G], *args: Maybe[object]
+    ) -> Just[G] | Nothing:
         """
         Apply a function that takes multiple arguments over multiple Maybe values, returning a missing value if any inputs were missing.
         This is a general version of Maybe.lift2.
@@ -164,7 +162,7 @@ class Maybe(CallableABC, Generic[T]):
             return cls._class_call(f(*values))
 
     @classmethod
-    def from_optional(cls: type[Maybe[G]], value: Optional[G], /) -> Maybe[G]:
+    def from_optional(cls: type[Maybe[G]], value: Optional[G], /) -> Just[G] | Nothing:
         """
         Create a Maybe value from a value that is potentially None.
         Returns a present value if value is not None, else returns a missing value.
@@ -175,7 +173,7 @@ class Maybe(CallableABC, Generic[T]):
             return cls._class_call(value)
 
     @classmethod
-    def with_bool(cls: type[Maybe[G]], present: bool, value: G) -> Maybe[G]:
+    def with_bool(cls: type[Maybe[G]], present: bool, value: G) -> Just[G] | Nothing:
         """
         Create a Maybe value from a value and a boolean.
         Returns a missing value if present is False, else returns a present value.

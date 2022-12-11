@@ -1,3 +1,5 @@
-dist/*
-**/__pycache__/*
-**/.mypy_cache/*
+dist/
+**/__pycache__/
+**/.mypy_cache/
+venv/
+.direnv/
